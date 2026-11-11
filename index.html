@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BAOO LAM STORE | Gaming Digital Shop</title>
+
+<style>
+
+:root{--bg:#080610;--panel:#151020;--purple:#9b4dff;--pink:#df55ff;--text:#fff;--muted:#b9abc9}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+
+button{cursor:pointer;border:0;border-radius:10px;padding:12px 17px;background:linear-gradient(100deg,#752bdb,#c43dff);color:white;font-weight:bold}
+
+button:hover{filter:brightness(1.2);transform:translateY(-1px)}
+
+input,textarea,select{width:100%;padding:13px;margin:7px 0;background:#0c0913;border:1px solid #49305f;border-radius:9px;color:white}
+
+header{background:radial-gradient(circle at top,#482070,#160d25 60%,#080610);padding:27px 15px;text-align:center;border-bottom:1px solid #8535c8}
+
+.logo{font-size:32px;font-weight:900;color:#e5bdff;text-shadow:0 0 20px #a52cff;letter-spacing:2px}
+
+header p{color:#d5c1e8}
+
+.topline{font-size:11px;letter-spacing:3px;color:#d78bff}
+
+nav{display:flex;gap:8px;overflow-x:auto;padding:12px;background:#100b19;position:sticky;top:0;z-index:10;border-bottom:1px solid #39204f}
+
+nav button{white-space:nowrap;background:#21152e;border:1px solid #563273;font-size:12px;padding:11px}
+
+main{max-width:1100px;margin:auto;padding:17px}
+
+.page{display:none;animation:fade .25s}
+
+.page.active{display:block}
+
+@keyframes fade{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.hero{padding:38px 22px;border-radius:20px;background:linear-gradient(120deg,#321052,#160d27 65%,#42125d);border:1px solid #9948d6;box-shadow:0 0 28px #5d198c44;text-align:center}
+
+.hero h1{font-size:clamp(27px,6vw,48px);color:#e5baff;text-shadow:0 0 18px #a63dff}
+
+.hero p{color:#e0d2ed;line-height:1.7}
+
+.tag{display:inline-block;background:#482267;color:#e8caff;border:1px solid #9454c7;border-radius:30px;padding:7px 12px;font-size:11px;margin:4px}
+
+.section{margin:18px 0;padding:19px;background:var(--panel);border:1px solid #382448;border-radius:16px}
+
+h2{color:#d9a5ff;margin-top:5px}
+
+h3{color:#e3bdff}
+
+p{line-height:1.55}
+
+.muted{color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+
+.card{padding:17px;border-radius:14px;background:linear-gradient(145deg,#21172e,#120e1b);border:1px solid #573371;transition:.2s}
+
+.card:hover{border-color:#d06bff;box-shadow:0 0 18px #8c31c944}
+
+.card .emoji{font-size:29px}
+
+.price{font-size:21px;color:#e3aaff;font-weight:bold}
+
+.big-number{font-size:26px;color:#e0aaff;font-weight:bold}
+
+.feature{padding:15px;background:#21162e;border-radius:12px;border:1px solid #49305e}
+
+.banner{padding:22px;border-radius:15px;background:linear-gradient(100deg,#40145c,#21102f);border:1px solid #8b43b5}
+
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+
+hr{border:0;border-top:1px solid #39264b;margin:17px 0}
+
+.badge{font-size:11px;color:#e4c1ff;background:#43215d;border-radius:20px;padding:5px 9px}
+
+.product-image{height:110px;border-radius:10px;background:linear-gradient(135deg,#29143f,#130d20);display:grid;place-items:center;font-size:45px;margin-bottom:12px}
+
+.faq details{padding:14px;border-bottom:1px solid #49305e}
+
+.faq summary{color:#e1b7ff;cursor:pointer;font-weight:bold}
+
+footer{margin-top:35px;padding:30px 15px;text-align:center;background:#100b18;border-top:1px solid #553071;color:#c1b2d0}
+
+footer a{color:#d7a1ff}
+
+.small{font-size:12px;color:#b9a8c9}
+
+.notice{background:#261a34;padding:13px;border-radius:10px;border-left:3px solid #b35aff}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="topline">WELCOME TO OUR DIGITAL WORLD</div>
+
+<div class="logo">BAOO LAM STORE</div>
+
+<p>ULTIMATE GAMING DIGITAL STORE</p>
+
+<span class="tag">✦ GAMING ✦ DIGITAL ✦ PREMIUM ✦</span>
+
+</header>
+
+<nav>
+
+<button onclick="showPage('home')">⌂ Trang chủ</button>
+
+<button onclick="showPage('products')">▣ Sản phẩm</button>
+
+<button onclick="showPage('categories')">▤ Danh mục</button>
+
+<button onclick="showPage('cart')">🛒 Giỏ hàng</button>
+
+<button onclick="showPage('orders')">▣ Đơn hàng</button>
+
+<button onclick="showPage('payment')">💳 Thanh toán</button>
+
+<button onclick="showPage('support')">🎧 Hỗ trợ</button>
+
+<button onclick="showPage('faq')">❔ FAQ</button>
+
+<button onclick="showPage('news')">📰 Tin tức</button>
+
+<button onclick="showPage('account')">👤 Tài khoản</button>
+
+<button onclick="showPage('admin')">🔐 Admin</button>
+
+</nav>
+
+<main>
+
+<!-- TRANG CHỦ -->
+
+<section id="home" class="page active">
+
+<div class="hero">
+
+<span class="badge">DIGITAL GAMING STORE</span>
+
+<h1>BAOO LAM STORE</h1>
+
+<h3>YOUR GAME. YOUR WORLD.</h3>
+
+<p>Khám phá kho tài nguyên kỹ thuật số, tài liệu và công cụ gaming hợp lệ.<br>Trải nghiệm mua sắm trực tuyến với phong cách neon cực chất.</p>
+
+<button onclick="showPage('products')">KHÁM PHÁ SẢN PHẨM →</button>
+
+<button onclick="showPage('support')">LIÊN HỆ SHOP</button>
+
+</div>
+
+<div class="section">
+
+<h2>✦ ĐIỂM NỔI BẬT</h2>
+
+<div class="grid">
+
+<div class="feature"><div class="emoji">🚀</div><h3>Hỗ trợ nhanh</h3><p class="muted">Tiếp nhận câu hỏi và yêu cầu hỗ trợ.</p></div>
+
+<div class="feature"><div class="emoji">🔐</div><h3>Minh bạch</h3><p class="muted">Thông tin sản phẩm và quy trình thanh toán rõ ràng.</p></div>
+
+<div class="feature"><div class="emoji">💎</div><h3>Sản phẩm số</h3><p class="muted">Tài liệu và tài nguyên kỹ thuật số hợp lệ.</p></div>
+
+<div class="feature"><div class="emoji">💜</div><h3>Chăm sóc khách</h3><p class="muted">Hỗ trợ các vấn đề sau khi mua hàng.</p></div>
+
+</div>
+
+</div>
+
+<div class="banner">
+
+<h2>🔥 SẢN PHẨM NỔI BẬT</h2>
+
+<p>Chọn danh mục phù hợp và khám phá các sản phẩm của shop.</p>
+
+<button onclick="showPage('products')">XEM TẤT CẢ</button>
+
+</div>
+
+<div class="section">
+
+<h2>📊 BAOO LAM STORE</h2>
+
+<div class="grid">
+
+<div class="feature"><div class="big-number">24/7</div><p class="muted">Kênh tiếp nhận hỗ trợ</p></div>
+
+<div class="feature"><div class="big-number">100%</div><p class="muted">Minh bạch quy trình</p></div>
+
+<div class="feature"><div class="big-number">VIP</div><p class="muted">Trải nghiệm khách hàng</p></div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>📣 THÔNG BÁO SHOP</h2>
+
+<p>Chào mừng bạn đến với BAOO LAM STORE.</p>
+
+<p class="muted">Thông tin sản phẩm, giá bán và chương trình ưu đãi sẽ được cập nhật tại đây.</p>
+
+</div>
+
+</section>
+
+<!-- SẢN PHẨM -->
+
+<section id="products" class="page">
+
+<h2>▣ KHO SẢN PHẨM</h2>
+
+<p class="muted">Tìm kiếm và lựa chọn sản phẩm kỹ thuật số.</p>
+
+<input id="search" placeholder="🔎 Tìm tên sản phẩm..." oninput="filterProducts()">
+
+<select id="categoryFilter" onchange="filterProducts()">
+
+<option value="">Tất cả danh mục</option>
+
+<option value="Gaming">Gaming</option>
+
+<option value="Tools">Tools</option>
+
+<option value="Guide">Guides</option>
+
+<option value="Digital">Digital</option>
+
+</select>
+
+<div id="productList" class="grid">
+
+<div class="card" data-category="Gaming">
+
+<div class="product-image">🎮</div><span class="badge">GAMING</span>
+
+<h3>Gaming Pack 01</h3><p>Tài nguyên gaming hợp lệ.</p><p class="price">Liên hệ</p>
+
+<button onclick="addCart('Gaming Pack 01')">THÊM VÀO GIỎ</button>
+
+</div>
+
+<div class="card" data-category="Tools">
+
+<div class="product-image">🧰</div><span class="badge">TOOLS</span>
+
+<h3>Gaming Tools 02</h3><p>Công cụ hỗ trợ hợp lệ.</p><p class="price">Liên hệ</p>
+
+<button onclick="addCart('Gaming Tools 02')">THÊM VÀO GIỎ</button>
+
+</div>
+
+<div class="card" data-category="Guide">
+
+<div class="product-image">📘</div><span class="badge">GUIDES</span>
+
+<h3>Gaming Guide 03</h3><p>Tài liệu hướng dẫn chơi game.</p><p class="price">Liên hệ</p>
+
+<button onclick="addCart('Gaming Guide 03')">THÊM VÀO GIỎ</button>
+
+</div>
+
+<div class="card" data-category="Digital">
+
+<div class="product-image">💎</div><span class="badge">DIGITAL</span>
+
+<h3>Digital Pack 04</h3><p>Bộ tài nguyên kỹ thuật số.</p><p class="price">Liên hệ</p>
+
+<button onclick="addCart('Digital Pack 04')">THÊM VÀO GIỎ</button>
+
+</div>
+
+<div class="card" data-category="Gaming">
+
+<div class="product-image">🏆</div><span class="badge">GAMING</span>
+
+<h3>Gaming Pack 05</h3><p>Tài liệu và nội dung dành cho game thủ.</p><p class="price">Liên hệ</p>
+
+<button onclick="addCart('Gaming Pack 05')">THÊM VÀO GIỎ</button>
+
+</div>
+
+<div class="card" data-category="Digital">
+
+<div class="product-image">🗂️</div><span class="badge">DIGITAL</span>
+
+<h3>Digital Pack 06</h3><p>Tài nguyên số tiện ích.</p><p class="price">Liên hệ</p>
+
+<button onclick="addCart('Digital Pack 06')">THÊM VÀO GIỎ</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- DANH MỤC -->
+
+<section id="categories" class="page">
+
+<h2>▤ DANH MỤC SẢN PHẨM</h2>
+
+<div class="grid">
+
+<div class="card"><div class="product-image">🎮</div><h3>Gaming</h3><p>Tài nguyên và nội dung gaming hợp lệ.</p><button onclick="filterCategory('Gaming')">KHÁM PHÁ</button></div>
+
+<div class="card"><div class="product-image">🧰</div><h3>Tools</h3><p>Công cụ hỗ trợ hợp lệ.</p><button onclick="filterCategory('Tools')">KHÁM PHÁ</button></div>
+
+<div class="card"><div class="product-image">📚</div><h3>Guides</h3><p>Tài liệu và hướng dẫn sử dụng.</p><button onclick="filterCategory('Guide')">KHÁM PHÁ</button></div>
+
+<div class="card"><div class="product-image">💎</div><h3>Digital</h3><p>Tài nguyên kỹ thuật số.</p><button onclick="filterCategory('Digital')">KHÁM PHÁ</button></div>
+
+</div>
+
+</section>
+
+<!-- GIỎ HÀNG -->
+
+<section id="cart" class="page">
+
+<h2>🛒 GIỎ HÀNG CỦA BẠN</h2>
+
+<div class="section" id="cartItems">Giỏ hàng đang trống.</div>
+
+<div class="row"><b id="cartCount">0 sản phẩm</b><button onclick="showPage('checkout')">TIẾN HÀNH ĐẶT HÀNG →</button></div>
+
+<button onclick="clearCart()" style="margin-top:12px;background:#45324e">XÓA GIỎ HÀNG</button>
+
+</section>
+
+<!-- ĐẶT HÀNG -->
+
+<section id="checkout" class="page">
+
+<h2>📦 THÔNG TIN ĐẶT HÀNG</h2>
+
+<div class="section">
+
+<p>Vui lòng điền thông tin chính xác để shop liên hệ xác nhận đơn.</p>
+
+<label>Họ và tên</label><input id="customerName" placeholder="Nhập họ tên">
+
+<label>Số điện thoại</label><input id="customerPhone" placeholder="Nhập số điện thoại">
+
+<label>Email</label><input id="customerEmail" placeholder="Nhập email">
+
+<label>Ghi chú</label><textarea id="customerNote" placeholder="Yêu cầu thêm (nếu có)"></textarea>
+
+<button onclick="createOrder()">XÁC NHẬN ĐẶT HÀNG</button>
+
+<div id="checkoutMessage" class="notice" style="display:none"></div>
+
+</div>
+
+</section>
+
+<!-- ĐƠN HÀNG -->
+
+<section id="orders" class="page">
+
+<h2>▣ TRA CỨU ĐƠN HÀNG</h2>
+
+<div class="section">
+
+<p>Nhập mã đơn hàng được cấp khi đặt hàng.</p>
+
+<input id="lookupCode" placeholder="Ví dụ: BL12345678">
+
+<button onclick="lookupOrder()">TRA CỨU ĐƠN</button>
+
+<div id="lookupResult" class="notice" style="margin-top:15px">Chưa có kết quả tra cứu.</div>
+
+</div>
+
+<div class="section">
+
+<h3>Trạng thái đơn hàng</h3>
+
+<p>🟡 Chờ xác nhận</p><p>🔵 Đang xử lý</p><p>🟢 Đã hoàn tất</p>
+
+</div>
+
+</section>
+
+<!-- THANH TOÁN -->
+
+<section id="payment" class="page">
+
+<h2>💳 THANH TOÁN</h2>
+
+<div class="section">
+
+<div class="product-image">💜</div>
+
+<h3>MoMo / VietQR</h3>
+
+<p>Shop sẽ gửi thông tin thanh toán và mã đơn sau khi xác nhận đơn hàng.</p>
+
+<div class="notice">Hãy kiểm tra đúng tên người nhận và nội dung chuyển khoản trước khi thanh toán.</div>
+
+<p>Trạng thái: <span class="badge">Chờ xác nhận thủ công</span></p>
+
+<p class="small">Không tự động xác nhận thanh toán tại phiên bản giao diện này. Shop cần kiểm tra giao dịch thực nhận trước khi giao file.</p>
+
+</div>
+
+<div class="section">
+
+<h3>Quy trình thanh toán</h3>
+
+<p>01. Nhận mã đơn hàng.</p><p>02. Nhận QR và thông tin từ shop.</p><p>03. Chuyển khoản đúng nội dung.</p><p>04. Shop kiểm tra giao dịch.</p><p>05. Shop xác nhận và xử lý đơn.</p>
+
+</div>
+
+</section>
+
+<!-- HỖ TRỢ KHÁCH HÀNG -->
+
+<section id="support" class="page">
+
+<h2>🎧 TRUNG TÂM HỖ TRỢ KHÁCH HÀNG</h2>
+
+<div class="hero">
+
+<h2>BAOO LAM CARE CENTER</h2>
+
+<p>Chúng tôi sẵn sàng tiếp nhận câu hỏi và hỗ trợ đơn hàng của bạn.</p>
+
+<span class="tag">CUSTOMER SERVICE</span>
+
+</div>
+
+<div class="grid">
+
+<div class="card"><div class="emoji">📦</div><h3>Hỗ trợ đơn hàng</h3><p>Tra cứu trạng thái, kiểm tra mã đơn và tiến độ xử lý.</p></div>
+
+<div class="card"><div class="emoji">💳</div><h3>Hỗ trợ thanh toán</h3><p>Giải đáp vấn đề chuyển khoản và xác nhận giao dịch.</p></div>
+
+<div class="card"><div class="emoji">📁</div><h3>Lỗi tải file</h3><p>Báo lỗi liên kết, file không mở được hoặc tải xuống thất bại.</p></div>
+
+<div class="card"><div class="emoji">🛠️</div><h3>Hỗ trợ kỹ thuật</h3><p>Hướng dẫn sử dụng sản phẩm và xử lý sự cố cơ bản.</p></div>
+
+<div class="card"><div class="emoji">🛡️</div><h3>Bảo hành</h3><p>Tiếp nhận yêu cầu theo chính sách của từng sản phẩm.</p></div>
+
+<div class="card"><div class="emoji">📝</div><h3>Khiếu nại</h3><p>Tiếp nhận phản hồi về đơn hàng và chất lượng dịch vụ.</p></div>
+
+</div>
+
+<div class="section">
+
+<h2>✉️ GỬI YÊU CẦU HỖ TRỢ</h2>
+
+<label>Họ tên</label><input id="supportName" placeholder="Tên của bạn">
+
+<label>Email hoặc số điện thoại</label><input id="supportContact" placeholder="Thông tin liên hệ">
+
+<label>Loại yêu cầu</label>
+
+<select id="supportType">
+
+<option>Hỏi về sản phẩm</option><option>Kiểm tra đơn hàng</option>
+
+<option>Vấn đề thanh toán</option><option>Lỗi tải file</option>
+
+<option>Hỗ trợ kỹ thuật</option><option>Bảo hành</option><option>Khiếu nại</option>
+
+</select>
+
+<label>Mã đơn hàng (nếu có)</label><input id="supportOrder" placeholder="Mã đơn">
+
+<label>Nội dung chi tiết</label><textarea id="supportContent" rows="5" placeholder="Mô tả vấn đề bạn gặp phải..."></textarea>
+
+<button onclick="sendSupport()">GỬI YÊU CẦU</button>
+
+<div id="supportMessage" class="notice" style="display:none;margin-top:12px"></div>
+
+<p class="small">Phiên bản hiện tại chỉ hiển thị xác nhận trên trình duyệt; cần máy chủ để shop nhận và lưu yêu cầu thực tế.</p>
+
+</div>
+
+</section>
+
+<!-- FAQ -->
+
+<section id="faq" class="page">
+
+<h2>❔ CÂU HỎI THƯỜNG GẶP</h2>
+
+<div class="section faq">
+
+<details><summary>Làm sao để mua sản phẩm?</summary><p>Chọn sản phẩm, thêm vào giỏ hàng, điền thông tin và gửi đơn cho shop.</p></details>
+
+<details><summary>Làm sao để thanh toán?</summary><p>Shop cung cấp thông tin QR sau khi xác nhận đơn. Vui lòng kiểm tra người nhận trước khi chuyển khoản.</p></details>
+
+<details><summary>Khi nào nhận được file?</summary><p>Shop kiểm tra giao dịch thực nhận rồi mới xác nhận và giao file.</p></details>
+
+<details><summary>Nếu tải file bị lỗi thì sao?</summary><p>Vào trung tâm hỗ trợ, chọn mục lỗi tải file và gửi thông tin đơn hàng.</p></details>
+
+<details><summary>Tôi có thể yêu cầu bảo hành không?</summary><p>Chính sách bảo hành tùy từng sản phẩm và điều kiện được công bố.</p></details>
+
+<details><summary>Làm sao để kiểm tra đơn?</summary><p>Vào mục đơn hàng và nhập mã đơn được cấp.</p></details>
+
+<details><summary>Shop có hỗ trợ ngoài giờ không?</summary><p>Bạn có thể gửi yêu cầu bất cứ lúc nào; shop phản hồi khi tiếp nhận được.</p></details>
+
+</div>
+
+</section>
+
+<!-- TIN TỨC -->
+
+<section id="news" class="page">
+
+<h2>📰 TIN TỨC & THÔNG BÁO</h2>
+
+<div class="card"><span class="badge">WELCOME</span><h3>Chào mừng đến BAOO LAM STORE</h3><p>Khám phá cửa hàng kỹ thuật số với giao diện gaming neon.</p></div>
+
+<div class="card" style="margin-top:12px"><span class="badge">UPDATE</span><h3>Cập nhật sản phẩm</h3><p>Các sản phẩm mới sẽ được shop thông báo tại đây.</p></div>
+
+<div class="card" style="margin-top:12px"><span class="badge">NOTICE</span><h3>Thông tin dịch vụ</h3><p>Vui lòng đọc kỹ mô tả và chính sách trước khi mua.</p></div>
+
+</section>
+
+<!-- TÀI KHOẢN -->
+
+<section id="account" class="page">
+
+<h2>👤 TÀI KHOẢN KHÁCH HÀNG</h2>
+
+<div class="section">
+
+<h3>Đăng nhập</h3>
+
+<input placeholder="Tên đăng nhập hoặc email">
+
+<input type="password" placeholder="Mật khẩu">
+
+<button onclick="alert('Chức năng đăng nhập cần hệ thống máy chủ.')">ĐĂNG NHẬP</button>
+
+<hr>
+
+<h3>Đăng ký tài khoản</h3>
+
+<input placeholder="Họ và tên">
+
+<input placeholder="Email">
+
+<input placeholder="Số điện thoại">
+
+<input type="password" placeholder="Tạo mật khẩu">
+
+<button onclick="alert('Chức năng đăng ký cần hệ thống máy chủ.')">ĐĂNG KÝ</button>
+
+<p class="small">Đăng nhập và đăng ký chưa hoạt động ở bản giao diện mẫu.</p>
+
+</div>
+
+</section>
+
+<!-- ADMIN -->
+
+<section id="admin" class="page">
+
+<h2>🔐 ADMIN CONTROL CENTER</h2>
+
+<div class="notice">Đây là bản xem trước giao diện quản trị. Chưa có đăng nhập bảo mật hoặc kết nối dữ liệu thật.</div>
+
+<div class="grid" style="margin-top:15px">
+
+<div class="card"><div class="emoji">📦</div><h3>Quản lý sản phẩm</h3><p>Thêm, sửa, ẩn và cập nhật sản phẩm.</p></div>
+
+<div class="card"><div class="emoji">🧾</div><h3>Quản lý đơn hàng</h3><p>Kiểm tra, xác nhận và xử lý đơn.</p></div>
+
+<div class="card"><div class="emoji">👥</div><h3>Khách hàng</h3><p>Quản lý thông tin khách mua.</p></div>
+
+<div class="card"><div class="emoji">💰</div><h3>Doanh thu</h3><p>Thống kê giao dịch và doanh số.</p></div>
+
+<div class="card"><div class="emoji">🎟️</div><h3>Mã giảm giá</h3><p>Tạo và quản lý ưu đãi.</p></div>
+
+<div class="card"><div class="emoji">🎧</div><h3>Yêu cầu hỗ trợ</h3><p>Tiếp nhận và phản hồi khách hàng.</p></div>
+
+<div class="card"><div class="emoji">⚙️</div><h3>Cài đặt shop</h3><p>Cấu hình thông tin cửa hàng.</p></div>
+
+<div class="card"><div class="emoji">📊</div><h3>Báo cáo</h3><p>Xem thống kê hoạt động.</p></div>
+
+</div>
+
+<div class="section">
+
+<h3>📋 Danh sách sản phẩm mẫu</h3>
+
+<p>Gaming Pack 01 — Chưa cấu hình giá</p>
+
+<p>Gaming Tools 02 — Chưa cấu hình giá</p>
+
+<p>Gaming Guide 03 — Chưa cấu hình giá</p>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div class="logo" style="font-size:23px">BAOO LAM STORE</div>
+
+<p>ULTIMATE GAMING DIGITAL STORE</p>
+
+<p>Uy tín • Minh bạch • Hỗ trợ khách hàng</p>
+
+<p><a href="#" onclick="showPage('support');return false">Trung tâm hỗ trợ</a> | <a href="#" onclick="showPage('faq');return false">Câu hỏi thường gặp</a></p>
+
+<p class="small">© 2026 BAOO LAM STORE. All rights reserved.</p>
+
+</footer>
+
+<script>
+
+let cart=[];
+
+let orders=[];
+
+function showPage(id){
+
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+ document.getElementById(id).classList.add('active');
+
+ window.scrollTo({top:0,behavior:'smooth'});
+
+}
+
+function addCart(name){
+
+ cart.push(name);
+
+ updateCart();
+
+ alert('Đã thêm '+name+' vào giỏ hàng!');
+
+}
+
+function updateCart(){
+
+ let box=document.getElementById('cartItems');
+
+ document.getElementById('cartCount').innerText=cart.length+' sản phẩm';
+
+ if(!cart.length){box.innerHTML='Giỏ hàng đang trống.';return;}
+
+ box.innerHTML=cart.map((x,i)=>'<p>'+(i+1)+'. '+x+'</p>').join('');
+
+}
+
+function clearCart(){
+
+ cart=[];
+
+ updateCart();
+
+}
+
+function filterProducts(){
+
+ let q=document.getElementById('search').value.toLowerCase();
+
+ let cat=document.getElementById('categoryFilter').value;
+
+ document.querySelectorAll('#productList .card').forEach(card=>{
+
+ let matchText=card.innerText.toLowerCase().includes(q);
+
+ let matchCat=!cat||card.dataset.category===cat;
+
+ card.style.display=matchText&&matchCat?'block':'none';
+
+ });
+
+}
+
+function filterCategory(cat){
+
+ showPage('products');
+
+ document.getElementById('categoryFilter').value=cat;
+
+ filterProducts();
+
+}
+
+function createOrder(){
+
+ let name=document.getElementById('customerName').value.trim();
+
+ let phone=document.getElementById('customerPhone').value.trim();
+
+ if(!name||!phone||!cart.length){
+
+ alert('Vui lòng nhập tên, số điện thoại và chọn sản phẩm.');
+
+ return;
+
+ }
+
+ let code='BL'+Date.now().toString().slice(-8);
+
+ orders.push({code,name,phone,items:[...cart],status:'Chờ shop xác nhận'});
+
+ cart=[];
+
+ updateCart();
+
+ let msg=document.getElementById('checkoutMessage');
+
+ msg.style.display='block';
+
+ msg.innerHTML='<b>Đã tạo đơn thử nghiệm!</b><br>Mã đơn: '+code+'<br>Đơn chỉ lưu trong phiên trình duyệt hiện tại.';
+
+}
+
+function lookupOrder(){
+
+ let code=document.getElementById('lookupCode').value.trim();
+
+ let o=orders.find(x=>x.code===code);
+
+ document.getElementById('lookupResult').innerText=o?
+
+ 'Mã đơn: '+o.code+' | Khách: '+o.name+' | Trạng thái: '+o.status:
+
+ 'Không tìm thấy đơn trong phiên truy cập này.';
+
+}
+
+function sendSupport(){
+
+ let name=document.getElementById('supportName').value.trim();
+
+ let contact=document.getElementById('supportContact').value.trim();
+
+ let content=document.getElementById('supportContent').value.trim();
+
+ if(!name||!contact||!content){
+
+ alert('Vui lòng điền tên, thông tin liên hệ và nội dung.');
+
+ return;
+
+ }
+
+ let box=document.getElementById('supportMessage');
+
+ box.style.display='block';
+
+ box.innerText='Đã ghi nhận nội dung trên giao diện thử nghiệm. Để shop thực sự nhận yêu cầu, cần kết nối máy chủ.';
+
+}
+
+</script>
+
+</body>
+
+</html>
