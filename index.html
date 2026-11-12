@@ -1,49 +1,291 @@
+
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>BAOO LAM STORE</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-
 *{box-sizing:border-box}
-
-body{margin:0;background:#090611;color:white;font-family:Arial,sans-serif}
-
-header{padding:22px;text-align:center;background:#170d29;border-bottom:1px solid #8b42ff}
-
-h1{color:#bd83ff;text-shadow:0 0 15px #8b42ff}
-
-main{max-width:900px;margin:auto;padding:18px}
-
-.card{background:#191126;border:1px solid #6535a0;border-radius:15px;padding:18px;margin:15px 0}
-
+body{margin:0;background:#090611;color:white;font-family:Arial}
+header{text-align:center;padding:25px;background:#1c1030;border-bottom:1px solid #a45cff}
+h1{color:#d1a5ff;text-shadow:0 0 15px #923dff}
+main{max-width:950px;margin:auto;padding:15px}
+.card{background:#191126;border:1px solid #70439b;border-radius:15px;padding:17px;margin:15px 0}
+h2{color:#d5adff;font-size:19px}
 input,textarea,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;border:1px solid #7950a8;background:#0e0918;color:white}
-
-button{background:#8b42ff;border:0;font-weight:bold;cursor:pointer}
-
-button:hover{background:#a66aff}
-
+button{background:#8b42ff;border:0;font-weight:bold}
+button.secondary{background:#39234d}
+button.danger{background:#a52d55}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .product{padding:14px;background:#241638;border-radius:10px;margin:10px 0}
-
-small{color:#c9a8ff}
-
-.hidden{display:none}
-
+.product img{width:100%;max-height:180px;object-fit:cover;border-radius:8px}
+.price{color:#d4a5ff;font-weight:bold}
+.hidden{display:none!important}
+.qr{padding:25px;border:1px dashed #b58add;text-align:center;border-radius:10px;color:#d4b6ef}
+.small{font-size:13px;color:#c5afd8}
+#message{color:#e6caff;white-space:pre-wrap}
+@media(max-width:550px){.row{grid-template-columns:1fr}}
 </style>
-
 </head>
-
 <body>
-
 <header>
+<h1>BAOO LAM STORE</h1>
+<p>Digital Store • Kho file kỹ thuật số</p>
+</header>
+<main>
+<div id="message"></div>
 
-<h1>BAOO LA
+<section class="card" id="auth">
+<h2>Đăng nhập / Đăng ký</h2>
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Mật khẩu">
+<div class="row">
+<button onclick="login()">Đăng nhập</button>
+<button class="secondary" onclick="signup()">Đăng ký</button>
+</div>
+</section>
+
+<section id="customer" class="hidden">
+<div class="card">
+<h2>Tài khoản của em</h2>
+<p id="userEmail"></p>
+<p>Số dư ví: <b class="price" id="balance">0 đ</b></p>
+<button class="secondary" onclick="logout()">Đăng xuất</button>
+</div>
+
+<div class="card">
+<h2>Nạp tiền MoMo</h2>
+<div class="qr">
+<strong>QR MOMO CỦA SHOP</strong>
+<p>Đang chờ thêm ảnh QR</p>
+</div>
+<p class="small">Chuyển khoản đúng số tiền, sau đó gửi bill để shop kiểm tra.</p>
+<input id="amount" type="number" min="1000" placeholder="Số tiền muốn nạp">
+<input id="bill" type="file" accept="image/*,.pdf">
+<button onclick="sendTopup()">Gửi bill nạp tiền</button>
+</div>
+
+<div class="card">
+<h2>Sản phẩm cửa hàng</h2>
+<div id="products">Đang tải...</div>
+</div>
+
+<div class="card">
+<h2>Lịch sử nạp tiền</h2>
+<div id="topups"></div>
+</div>
+
+<div class="card">
+<h2>Sản phẩm đã mua</h2>
+<div id="purchases"></div>
+</div>
+</section>
+
+<section id="admin" class="hidden">
+<div class="card">
+<h2>QUẢN TRỊ SHOP</h2>
+<p class="small">Khu vực chỉ dành cho tài khoản admin.</p>
+</div>
+
+<div class="card">
+<h2>Đăng sản phẩm mới</h2>
+<input id="pname" placeholder="Tên sản phẩm">
+<textarea id="pdesc" placeholder="Mô tả sản phẩm"></textarea>
+<input id="pprice" type="number" placeholder="Giá bán VNĐ">
+<input id="pimage" placeholder="Link ảnh sản phẩm (nếu có)">
+<input id="pfile" type="file">
+<button onclick="addProduct()">Đăng sản phẩm</button>
+</div>
+
+<div class="card">
+<h2>Yêu cầu nạp tiền</h2>
+<div id="adminTopups"></div>
+</div>
+
+<div class="card">
+<h2>Quản lý sản phẩm</h2>
+<div id="adminProducts"></div>
+</div>
+</section>
+</main>
+
+<script>
+const URL="https://apdakhzowhjllzbosngg.supabase.co";
+const KEY="sb_publishable_Y6Y90PgAYQCRXEVfaVs6Lw_uKzqgjxg";
+const db=window.supabase.createClient(URL,KEY);
+let user=null,isAdmin=false;
+const el=id=>document.getElementById(id);
+const say=t=>el("message").textContent=t;
+const money=n=>Number(n||0).toLocaleString("vi-VN")+" đ";
+const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+async function login(){
+ const {error}=await db.auth.signInWithPassword({
+  email:el("email").value.trim(),password:el("password").value
+ });
+ if(error)return say(error.message);
+ say("Đăng nhập thành công");await refresh();
+}
+async function signup(){
+ const {data,error}=await db.auth.signUp({
+  email:el("email").value.trim(),password:el("password").value
+ });
+ if(error)return say(error.message);
+ say(data.session?"Đăng ký thành công":"Đăng ký xong. Hãy kiểm tra email xác nhận.");
+ await refresh();
+}
+async function logout(){
+ await db.auth.signOut();say("Đã đăng xuất");await refresh();
+}
+async function refresh(){
+ const {data:{session}}=await db.auth.getSession();
+ user=session?.user||null;
+ el("auth").classList.toggle("hidden",!!user);
+ el("customer").classList.toggle("hidden",!user);
+ el("admin").classList.add("hidden");
+ if(!user){isAdmin=false;return}
+ el("userEmail").textContent=user.email;
+ const [w,a]=await Promise.all([
+  db.from("wallets").select("balance").eq("user_id",user.id).maybeSingle(),
+  db.rpc("is_store_admin")
+ ]);
+ if(w.error)say("Lỗi đọc ví: "+w.error.message);
+ el("balance").textContent=money(w.data?.balance);
+ isAdmin=!!a.data;
+ el("admin").classList.toggle("hidden",isAdmin);
+ await Promise.all([loadProducts(),loadTopups(),loadPurchases()]);
+ if(isAdmin)await Promise.all([loadAdminTopups(),loadAdminProducts()]);
+}
+async function loadProducts(){
+ const {data,error}=await db.from("products")
+ .select("id,name,description,price,image_url")
+ .eq("is_active",true).order("created_at",{ascending:false});
+ if(error){el("products").textContent=error.message;return}
+ el("products").innerHTML=data.length?data.map(p=>`
+ <div class="product">
+ ${p.image_url?`<img src="${safe(p.image_url)}">`:""}
+ <h3>${safe(p.name)}</h3>
+ <p>${safe(p.description)}</p>
+ <p class="price">${money(p.price)}</p>
+ <button onclick="buy('${p.id}')">Mua ngay</button>
+ </div>`).join(""):"Chưa có sản phẩm.";
+}
+async function buy(id){
+ if(!confirm("Xác nhận mua sản phẩm bằng số dư ví?"))return;
+ const {error}=await db.rpc("buy_store_product",{p_product_id:id});
+ if(error)say(error.message);
+ else{say("Mua hàng thành công!");await refresh()}
+}
+async function sendTopup(){
+ const amount=Number(el("amount").value),file=el("bill").files[0];
+ if(!Number.isInteger(amount)||amount<1000)return say("Số tiền không hợp lệ.");
+ if(!file)return say("Em chưa chọn bill.");
+ const ext=(file.name.split(".").pop()||"jpg").replace(/[^a-z0-9]/gi,"");
+ const path=user.id+"/"+Date.now()+"."+ext;
+ const up=await db.storage.from("topup-bills").upload(path,file);
+ if(up.error)return say("Lỗi tải bill: "+up.error.message);
+ const {error}=await db.from("topup_requests").insert({
+  user_id:user.id,amount:amount,bill_path:path
+ });
+ if(error)return say("Lỗi gửi yêu cầu: "+error.message);
+ el("amount").value="";el("bill").value="";
+ say("Đã gửi bill. Vui lòng chờ shop kiểm tra giao dịch thật.");
+ await refresh();
+}
+async function loadTopups(){
+ const {data,error}=await db.from("topup_requests")
+ .select("amount,status,created_at").order("created_at",{ascending:false});
+ if(error){el("topups").textContent=error.message;return}
+ el("topups").innerHTML=data.map(x=>
+ `<p>${money(x.amount)} — ${safe(x.status)}</p>`).join("")||"Chưa có giao dịch.";
+}
+async function loadPurchases(){
+ const {data,error}=await db.from("purchases")
+ .select("id,product_id,price,products(name)")
+ .order("created_at",{ascending:false});
+ if(error){el("purchases").textContent=error.message;return}
+ el("purchases").innerHTML=data.map(x=>`
+ <div class="product">
+ ${safe(x.products?.name||"Sản phẩm")} — ${money(x.price)}
+ <button onclick="download('${x.product_id}')">Tải file</button>
+ </div>`).join("")||"Chưa mua sản phẩm nào.";
+}
+async function download(id){
+ const {data:p,error}=await db.from("products")
+ .select("file_path").eq("id",id).maybeSingle();
+ if(error||!p?.file_path)return say("Không tìm thấy file.");
+ const {data,error:e}=await db.storage.from("product-files")
+ .createSignedUrl(p.file_path,120);
+ if(e)return say(e.message);
+ window.open(data.signedUrl,"_blank");
+}
+async function loadAdminTopups(){
+ const {data,error}=await db.from("topup_requests")
+ .select("*").eq("status","pending").order("created_at");
+ if(error){el("adminTopups").textContent=error.message;return}
+ if(!data.length){el("adminTopups").textContent="Không có yêu cầu.";return}
+ let html="";
+ for(const x of data){
+  const {data:s}=await db.storage.from("topup-bills")
+  .createSignedUrl(x.bill_path,300);
+  html+=`<div class="product">
+  <p>${money(x.amount)}</p>
+  <p class="small">User: ${safe(x.user_id)}</p>
+  ${s?`<a target="_blank" href="${s.signedUrl}">Xem bill</a>`:"Không mở được bill"}
+  <button onclick="review('${x.id}',true)">Duyệt và cộng tiền</button>
+  <button class="danger" onclick="review('${x.id}',false)">Từ chối</button>
+  </div>`;
+ }
+ el("adminTopups").innerHTML=html;
+}
+async function review(id,approve){
+ if(!confirm(approve?"Đã kiểm tra tiền vào tài khoản MoMo thật?":"Xác nhận từ chối?"))return;
+ const {error}=await db.rpc("approve_topup",{
+  p_request_id:id,p_approve:approve
+ });
+ if(error)say(error.message);
+ else{say("Đã xử lý yêu cầu.");await refresh()}
+}
+async function addProduct(){
+ const name=el("pname").value.trim();
+ const price=Number(el("pprice").value);
+ const file=el("pfile").files[0];
+ if(!name||!Number.isFinite(price)||price<0||!file)
+ return say("Nhập tên, giá và chọn file sản phẩm.");
+ const ext=(file.name.split(".").pop()||"bin").replace(/[^a-z0-9]/gi,"");
+ const path="products/"+crypto.randomUUID()+"."+ext;
+ const up=await db.storage.from("product-files").upload(path,file);
+ if(up.error)return say(up.error.message);
+ const {error}=await db.from("products").insert({
+  name,description:el("pdesc").value,price,
+  image_url:el("pimage").value.trim()||null,
+  file_path:path,is_active:true
+ });
+ if(error)return say(error.message);
+ say("Đã đăng sản phẩm.");
+ ["pname","pdesc","pprice","pimage","pfile"].forEach(id=>el(id).value="");
+ await refresh();
+}
+async function loadAdminProducts(){
+ const {data,error}=await db.from("products")
+ .select("id,name,price,is_active").order("created_at",{ascending:false});
+ if(error){el("adminProducts").textContent=error.message;return}
+ el("adminProducts").innerHTML=data.map(p=>`
+ <div class="product">
+ ${safe(p.name)} — ${money(p.price)}
+ <p>${p.is_active?"Đang bán":"Đã ẩn"}</p>
+ <button class="secondary" onclick="toggleProduct('${p.id}',${!p.is_active})">
+ ${p.is_active?"Ẩn sản phẩm":"Hiện sản phẩm"}
+ </button></div>`).join("");
+}
+async function toggleProduct(id,active){
+ const {error}=await db.from("products").update({is_active:active}).eq("id",id);
+ if(error)say(error.message);else await refresh();
+}
+db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
+refresh();
+</script>
+</body>
+</html>
