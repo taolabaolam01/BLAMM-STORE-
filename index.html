@@ -285,9 +285,8 @@ async function toggleProduct(id,active){
  if(error)say(error.message);else await refresh();
 }
 db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
-refresh();
+refresh();window.login = login;
+window.signup = signup;
 </script>
 </body>
-</html>
-window.login = login;
-window.signup = signup;
+
