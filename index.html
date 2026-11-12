@@ -3,37 +3,43 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>BAOO LAM STORE</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+:root{--bg:#090611;--panel:#191126;--line:#70439b;--purple:#8b42ff;--text:#fff;--muted:#c5afd8}
 *{box-sizing:border-box}
-body{margin:0;background:#090611;color:#fff;font-family:Arial,sans-serif}
-header{text-align:center;padding:26px 15px;background:#1c1030;border-bottom:1px solid #a45cff}
-h1{margin:0;color:#d1a5ff;text-shadow:0 0 15px #923dff;font-size:clamp(26px,6vw,42px)}
-header p{margin:12px 0 0;font-size:17px}
-main{max-width:900px;margin:auto;padding:15px}
-.card{background:#191126;border:1px solid #70439b;border-radius:16px;padding:18px;margin:15px 0}
-h2{color:#d5adff;font-size:21px;margin-top:0}
-input,textarea,button{width:100%;padding:14px;margin:7px 0;border-radius:10px;border:1px solid #7950a8;background:#0e0918;color:white;font-size:16px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px Arial,sans-serif}
+header{text-align:center;padding:23px 14px;background:#1c1030;border-bottom:1px solid #a45cff}
+h1{margin:0;color:#d1a5ff;font-size:clamp(27px,7vw,40px);text-shadow:0 0 15px #923dff}
+header p{margin:8px 0 0;color:#e8d8f8}
+main{max-width:900px;margin:auto;padding:14px 14px 105px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:13px 0}
+h2{color:#d5adff;margin:0 0 15px;font-size:22px}
+input,textarea,select,button{width:100%;padding:14px;margin:7px 0;border-radius:11px;border:1px solid #7950a8;background:#0e0918;color:white;font-size:16px}
 textarea{min-height:85px}
-button{background:#8b42ff;border:0;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.6}
+button{background:var(--purple);border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.55}
 button.secondary{background:#39234d}
 button.danger{background:#a52d55}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.product{padding:14px;background:#241638;border-radius:10px;margin:10px 0;overflow-wrap:anywhere}
-.product img{width:100%;max-height:220px;object-fit:contain;border-radius:8px}
-.price{color:#d4a5ff;font-weight:bold}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .hidden{display:none!important}
-#message{padding:0 4px;color:#ffe0a6;white-space:pre-wrap;overflow-wrap:anywhere}
-.small{font-size:13px;color:#c5afd8;line-height:1.5}
-.qr-wrap{text-align:center;background:#fff;border-radius:15px;padding:14px;margin:12px auto;max-width:480px}
-.qr-wrap img{display:block;width:100%;height:auto;border-radius:8px}
-.qr-note{color:#241638;font-weight:bold;margin:8px 0}
-.status{padding:10px;background:#241638;border-radius:8px;margin:8px 0}
-a{color:#9bc8ff}
-@media(max-width:550px){.row{grid-template-columns:1fr}}
+.small{font-size:13px;color:var(--muted);line-height:1.5}
+.price{color:#d4a5ff;font-weight:bold}
+.product{padding:13px;background:#241638;border-radius:12px;margin:10px 0;overflow-wrap:anywhere}
+.product img{width:100%;max-height:220px;object-fit:contain;border-radius:8px}
+.status{padding:10px;background:#241638;border-radius:9px;margin:8px 0}
+#message{color:#ffe0a6;white-space:pre-wrap;overflow-wrap:anywhere;padding:5px}
+.nav{position:fixed;z-index:10;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px 5px calc(8px + env(safe-area-inset-bottom));background:#160d24;border-top:1px solid var(--line)}
+.nav button{margin:0;padding:9px 2px;background:#2b1a3d;font-size:12px;line-height:1.45}
+.nav button.active{background:var(--purple)}
+.page{display:none}
+.page.active{display:block}
+.qrbox{background:#fff;color:#241638;text-align:center;border-radius:13px;padding:18px;font-weight:bold;max-width:360px;margin:10px auto}
+.qrbox img{width:100%;display:block}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top button{width:auto;padding:10px 14px}
+.pill{display:inline-block;padding:5px 10px;border-radius:20px;background:#39234d;color:#e7d4ff;font-size:12px}
 </style>
 </head>
 <body>
@@ -44,52 +50,100 @@ a{color:#9bc8ff}
 <main>
 <div id="message" role="status" aria-live="polite"></div>
 
-<section class="card" id="auth">
+<section id="auth" class="card">
 <h2>Đăng nhập / Đăng ký</h2>
 <input id="email" type="email" autocomplete="email" placeholder="Email">
 <input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu (ít nhất 6 ký tự)">
 <div class="row">
-<button type="button" id="loginBtn">Đăng nhập</button>
-<button type="button" class="secondary" id="signupBtn">Đăng ký</button>
+<button id="loginBtn">Đăng nhập</button>
+<button id="signupBtn" class="secondary">Đăng ký</button>
 </div>
-<p class="small">Nếu đăng ký yêu cầu xác nhận, hãy mở email để xác nhận tài khoản trước khi đăng nhập.</p>
+<p class="small">Nếu được yêu cầu xác nhận, hãy mở email để xác nhận tài khoản.</p>
 </section>
 
 <section id="customer" class="hidden">
-<div class="card">
-<h2>Tài khoản của em</h2>
-<p id="userEmail"></p>
-<p>Số dư ví: <b class="price" id="balance">0 đ</b></p>
-<button type="button" class="secondary" id="logoutBtn">Đăng xuất</button>
-</div>
+<nav class="nav" id="nav">
+<button class="active" data-page="home">⌂<br>Trang chủ</button>
+<button data-page="search">⌕<br>Tìm kiếm</button>
+<button data-page="android">🤖<br>Android</button>
+<button data-page="ios"><br>iOS</button>
+<button data-page="menu">☰<br>Menu</button>
+</nav>
 
+<section id="page-home" class="page active">
+<div class="card">
+<div class="top">
+<div><h2>Chào mừng đến shop</h2><span class="pill">BAOO LAM STORE</span></div>
+<button id="homeTopup" style="max-width:125px">＋ Nạp tiền</button>
+</div>
+<p>Số dư ví: <b id="balance" class="price">0 đ</b></p>
+</div>
+<div class="card"><h2>Sản phẩm mới</h2><div id="homeProducts">Đang tải...</div></div>
+</section>
+
+<section id="page-search" class="page">
+<div class="card"><h2>Tìm kiếm sản phẩm</h2><input id="searchInput" placeholder="Nhập tên sản phẩm cần tìm..."><div id="searchProducts"></div></div>
+</section>
+
+<section id="page-android" class="page">
+<div class="card"><h2>Kho Android</h2><div id="androidProducts">Đang tải...</div></div>
+</section>
+
+<section id="page-ios" class="page">
+<div class="card"><h2>Kho iOS</h2><div id="iosProducts">Đang tải...</div></div>
+</section>
+
+<section id="page-topup" class="page">
+<div class="top"><h2>Nạp tiền</h2><button class="secondary" data-back="home">← Quay lại</button></div>
 <div class="card">
 <h2>Nạp tiền MoMo</h2>
-<div class="qr-wrap">
-<img src="data:image/png;base64,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" alt="Mã QR MoMo của BAOO LAM STORE">
-<div class="qr-note">Quét mã QR để chuyển khoản</div>
+<div class="qrbox">
+<div style="font-size:48px">▦</div>
+QR THANH TOÁN MOMO<br>
+<small>Chủ shop cần cập nhật ảnh QR thật tại đây</small>
 </div>
-<p class="small">Chuyển khoản bằng QR ở trên. Sau khi chuyển thành công, nhập đúng số tiền và gửi ảnh biên lai để shop kiểm tra. Shop chỉ cộng tiền sau khi xác nhận giao dịch thực tế.</p>
+<p class="small">Chuyển khoản xong, nhập số tiền và gửi ảnh biên lai. Shop kiểm tra giao dịch thực tế rồi mới cộng tiền.</p>
 <input id="amount" type="number" min="1000" step="1000" placeholder="Số tiền muốn nạp (VNĐ)">
 <input id="bill" type="file" accept="image/*,.pdf">
-<button type="button" id="sendTopupBtn">Gửi bill nạp tiền</button>
+<button id="sendTopupBtn">Gửi bill nạp tiền</button>
+<h2>Lịch sử nạp tiền</h2><div id="topups"></div>
 </div>
+</section>
 
-<div class="card"><h2>Sản phẩm cửa hàng</h2><div id="products">Đang tải...</div></div>
-<div class="card"><h2>Lịch sử nạp tiền</h2><div id="topups"></div></div>
-<div class="card"><h2>Sản phẩm đã mua</h2><div id="purchases"></div></div>
+<section id="page-menu" class="page">
+<div class="card">
+<h2>Tài khoản</h2>
+<p id="userEmail"></p>
+<p>Số dư: <b id="menuBalance" class="price">0 đ</b></p>
+<button id="menuTopup">Nạp tiền</button>
+<button id="logoutBtn" class="secondary">Đăng xuất</button>
+</div>
+<div class="card"><h2>Lịch sử mua hàng</h2><div id="purchases"></div></div>
+<div class="card">
+<h2>Khu vực quản trị</h2>
+<p class="small">Chỉ tài khoản được cấp quyền admin mới mở được.</p>
+<button id="openAdminBtn" class="secondary">Mở quản trị</button>
+</div>
+</section>
 </section>
 
 <section id="admin" class="hidden">
-<div class="card"><h2>QUẢN TRỊ SHOP</h2><p class="small">Chỉ tài khoản được thêm vào bảng admins mới thấy khu vực này.</p></div>
+<div class="card">
+<div class="top"><h2>QUẢN TRỊ SHOP</h2><button class="secondary" id="backShop">← Về shop</button></div>
+<p class="small">Chỉ admin được cấp quyền trong bảng public.admins.</p>
+</div>
 <div class="card">
 <h2>Đăng sản phẩm mới</h2>
 <input id="pname" placeholder="Tên sản phẩm">
 <textarea id="pdesc" placeholder="Mô tả sản phẩm"></textarea>
 <input id="pprice" type="number" min="0" placeholder="Giá bán VNĐ">
+<select id="pcategory">
+<option value="android">Android</option>
+<option value="ios">iOS</option>
+</select>
 <input id="pimage" placeholder="Link ảnh sản phẩm (không bắt buộc)">
 <input id="pfile" type="file">
-<button type="button" id="addProductBtn">Đăng sản phẩm</button>
+<button id="addProductBtn">Đăng sản phẩm</button>
 </div>
 <div class="card"><h2>Yêu cầu nạp tiền</h2><div id="adminTopups"></div></div>
 <div class="card"><h2>Quản lý sản phẩm</h2><div id="adminProducts"></div></div>
@@ -97,161 +151,266 @@ a{color:#9bc8ff}
 </main>
 
 <script>
-(function(){
-"use strict";
-const URL="https://apdakhzowhjllzbosngg.supabase.co";
-const KEY="sb_publishable_Y6Y90PgAYQCRXEVfaVs6Lw_uKzqgjxg";
-const el=id=>document.getElementById(id);
-const say=t=>{el("message").textContent=String(t||"");};
-const money=n=>Number(n||0).toLocaleString("vi-VN")+" đ";
-const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let db=null,user=null,isAdmin=false,busy=false;
+(()=>{
+'use strict';
 
-window.addEventListener("error",e=>say("Lỗi JavaScript: "+(e.message||"không xác định")+" — dòng "+(e.lineno||"?")));
-window.addEventListener("unhandledrejection",e=>say("Lỗi kết nối: "+(e.reason?.message||String(e.reason||"không xác định"))));
+const SUPABASE_URL='https://apdakhzowhjllzbosngg.supabase.co';
+const SUPABASE_KEY='sb_publishable_Y6Y90PgAYQCRXEVfaVs6Lw_uKzqgjxg';
 
-function setBusy(v){busy=v;["loginBtn","signupBtn","logoutBtn","sendTopupBtn","addProductBtn"].forEach(id=>{if(el(id))el(id).disabled=v;});}
-async function run(action){
+const $=id=>document.getElementById(id);
+const say=t=>$('message').textContent=String(t||'');
+const money=n=>Number(n||0).toLocaleString('vi-VN')+' đ';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let db,user=null,isAdmin=false,busy=false,products=[];
+
+function init(){
+ if(!window.supabase?.createClient)throw Error('Không tải được Supabase. Kiểm tra mạng và tải lại trang.');
+ db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+}
+
+function run(fn){
  if(busy)return;
- setBusy(true);
- try{await action();}catch(e){say("Có lỗi: "+(e?.message||String(e)));console.error(e);}
- finally{setBusy(false);}
+ busy=true;
+ document.querySelectorAll('button').forEach(b=>b.disabled=true);
+ Promise.resolve().then(fn).catch(e=>say('Có lỗi: '+(e.message||e))).finally(()=>{
+  busy=false;
+  document.querySelectorAll('button').forEach(b=>b.disabled=false);
+ });
 }
-function requireDb(){
- if(!window.supabase?.createClient)throw new Error("Không tải được thư viện Supabase. Kiểm tra mạng rồi tải lại trang.");
- if(!db)db=window.supabase.createClient(URL,KEY);
- return db;
+
+function page(name){
+ document.querySelectorAll('#customer .page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
+ document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
 }
+
+function card(p){
+ return `<article class="product">
+ ${p.image_url?`<img src="${esc(p.image_url)}" alt="">`:''}
+ <h3>${esc(p.name)}</h3>
+ <p>${esc(p.description)}</p>
+ <p class="price">${money(p.price)}</p>
+ <span class="pill">${p.category==='ios'?'iOS':'Android'}</span>
+ <button data-buy="${esc(p.id)}">Mua ngay</button>
+ </article>`;
+}
+
+function renderProducts(){
+ const put=(id,arr)=>$(id).innerHTML=arr.map(card).join('')||'Chưa có sản phẩm.';
+ put('homeProducts',products.slice(0,8));
+ put('androidProducts',products.filter(p=>p.category==='android'));
+ put('iosProducts',products.filter(p=>p.category==='ios'));
+ const q=$('searchInput').value.trim().toLowerCase();
+ put('searchProducts',products.filter(p=>(p.name+' '+(p.description||'')).toLowerCase().includes(q)));
+}
+
+async function refresh(){
+ const {data,error}=await db.auth.getSession();
+ if(error)throw error;
+ user=data.session?.user||null;
+ $('auth').classList.toggle('hidden',!!user);
+ $('customer').classList.toggle('hidden',!user);
+ $('admin').classList.add('hidden');
+ if(!user){isAdmin=false;return;}
+ $('userEmail').textContent=user.email||'';
+ const [w,a]=await Promise.all([
+  db.from('wallets').select('balance').eq('user_id',user.id).maybeSingle(),
+  db.rpc('is_store_admin')
+ ]);
+ if(w.error)say('Lỗi đọc ví: '+w.error.message);
+ isAdmin=!!a.data;
+ $('balance').textContent=money(w.data?.balance);
+ $('menuBalance').textContent=money(w.data?.balance);
+ await Promise.all([loadProducts(),loadTopups(),loadPurchases()]);
+}
+
+async function loadProducts(){
+ const {data,error}=await db.from('products').select('id,name,description,price,image_url,category').eq('is_active',true).order('created_at',{ascending:false});
+ if(error){say('Lỗi tải sản phẩm: '+error.message);return;}
+ products=data||[];
+ renderProducts();
+}
+
 async function login(){
- const email=el("email").value.trim(),password=el("password").value;
- if(!email||!password)return say("Nhập email và mật khẩu trước nhé.");
- const {error}=await requireDb().auth.signInWithPassword({email,password});
+ const email=$('email').value.trim(),password=$('password').value;
+ if(!email||!password)throw Error('Nhập email và mật khẩu.');
+ const {error}=await db.auth.signInWithPassword({email,password});
  if(error)throw error;
- say("Đăng nhập thành công.");await refresh();
+ say('Đăng nhập thành công.');
+ await refresh();
 }
+
 async function signup(){
- const email=el("email").value.trim(),password=el("password").value;
- if(!email||!password)return say("Nhập email và mật khẩu trước nhé.");
- if(password.length<6)return say("Mật khẩu cần ít nhất 6 ký tự.");
- const {data,error}=await requireDb().auth.signUp({email,password});
+ const email=$('email').value.trim(),password=$('password').value;
+ if(!email||!password)throw Error('Nhập email và mật khẩu.');
+ if(password.length<6)throw Error('Mật khẩu cần ít nhất 6 ký tự.');
+ const {data,error}=await db.auth.signUp({email,password});
  if(error)throw error;
- say(data.session?"Đăng ký thành công.":"Đăng ký xong. Hãy kiểm tra email xác nhận nếu Supabase yêu cầu.");
+ say(data.session?'Đăng ký thành công.':'Đăng ký xong. Hãy kiểm tra email xác nhận nếu được yêu cầu.');
  if(data.session)await refresh();
 }
-async function logout(){const {error}=await requireDb().auth.signOut();if(error)throw error;user=null;await refresh();say("Đã đăng xuất.");}
-async function refresh(){
- const client=requireDb();
- const {data,error}=await client.auth.getSession();if(error)throw error;
- user=data.session?.user||null;
- el("auth").classList.toggle("hidden",!!user);
- el("customer").classList.toggle("hidden",!user);
- el("admin").classList.add("hidden");
- if(!user){isAdmin=false;return;}
- el("userEmail").textContent=user.email||"";
- const [w,a]=await Promise.all([
-  client.from("wallets").select("balance").eq("user_id",user.id).maybeSingle(),
-  client.rpc("is_store_admin")
- ]);
- if(w.error)say("Lỗi đọc ví: "+w.error.message);
- el("balance").textContent=money(w.data?.balance);
- isAdmin=!!a.data;
- el("admin").classList.toggle("hidden",isAdmin);
- await Promise.all([loadProducts(),loadTopups(),loadPurchases()]);
- if(isAdmin)await Promise.all([loadAdminTopups(),loadAdminProducts()]);
-}
-async function loadProducts(){
- const {data,error}=await db.from("products").select("id,name,description,price,image_url").eq("is_active",true).order("created_at",{ascending:false});
- if(error){el("products").textContent=error.message;return;}
- el("products").innerHTML=(data||[]).map(p=>`<div class="product">${p.image_url?`<img src="${safe(p.image_url)}" alt="">`:""}<h3>${safe(p.name)}</h3><p>${safe(p.description)}</p><p class="price">${money(p.price)}</p><button type="button" data-buy="${safe(p.id)}">Mua ngay</button></div>`).join("")||"Chưa có sản phẩm.";
-}
-async function buy(id){
- if(!confirm("Xác nhận mua sản phẩm bằng số dư ví?"))return;
- const {error}=await db.rpc("buy_store_product",{p_product_id:id});if(error)throw error;
- say("Mua hàng thành công.");await refresh();
-}
-async function sendTopup(){
- const amount=Number(el("amount").value),file=el("bill").files[0];
- if(!Number.isInteger(amount)||amount<1000)return say("Số tiền nạp không hợp lệ.");
- if(!file)return say("Em chưa chọn ảnh/PDF bill.");
- if(file.size>8*1024*1024)return say("Bill tối đa 8 MB nhé.");
- const ext=(file.name.split(".").pop()||"jpg").replace(/[^a-z0-9]/gi,"")||"jpg";
- const path=user.id+"/"+Date.now()+"."+ext;
- const up=await db.storage.from("topup-bills").upload(path,file,{upsert:false});
- if(up.error)throw up.error;
- const {error}=await db.from("topup_requests").insert({user_id:user.id,amount,bill_path:path});
+
+async function logout(){
+ const {error}=await db.auth.signOut();
  if(error)throw error;
- el("amount").value="";el("bill").value="";
- say("Đã gửi bill. Shop sẽ kiểm tra giao dịch thật trước khi cộng tiền.");await refresh();
+ user=null;
+ await refresh();
+ say('Đã đăng xuất.');
 }
+
 async function loadTopups(){
- const {data,error}=await db.from("topup_requests").select("amount,status,created_at").order("created_at",{ascending:false});
- if(error){el("topups").textContent=error.message;return;}
- el("topups").innerHTML=(data||[]).map(x=>`<div class="status">${money(x.amount)} — ${safe(x.status)}</div>`).join("")||"Chưa có giao dịch.";
+ const {data,error}=await db.from('topup_requests').select('amount,status,created_at').order('created_at',{ascending:false});
+ if(error){$('topups').textContent=error.message;return;}
+ $('topups').innerHTML=(data||[]).map(x=>`<div class="status">${money(x.amount)} — ${esc(x.status)}</div>`).join('')||'Chưa có giao dịch.';
 }
+
 async function loadPurchases(){
- const {data,error}=await db.from("purchases").select("id,product_id,price,products(name)").order("created_at",{ascending:false});
- if(error){el("purchases").textContent=error.message;return;}
- el("purchases").innerHTML=(data||[]).map(x=>`<div class="product">${safe(x.products?.name||"Sản phẩm")} — ${money(x.price)}<button type="button" data-download="${safe(x.product_id)}">Tải file</button></div>`).join("")||"Chưa mua sản phẩm nào.";
+ const {data,error}=await db.from('purchases').select('id,product_id,price,products(name)').order('created_at',{ascending:false});
+ if(error){$('purchases').textContent=error.message;return;}
+ $('purchases').innerHTML=(data||[]).map(x=>`<div class="product">${esc(x.products?.name||'Sản phẩm')} — ${money(x.price)}<button data-download="${esc(x.product_id)}">Tải file</button></div>`).join('')||'Chưa mua sản phẩm nào.';
 }
+
+async function sendTopup(){
+ const amount=Number($('amount').value),file=$('bill').files[0];
+ if(!Number.isInteger(amount)||amount<1000)throw Error('Số tiền nạp không hợp lệ.');
+ if(!file)throw Error('Chưa chọn ảnh/PDF bill.');
+ if(file.size>8*1024*1024)throw Error('Bill tối đa 8 MB.');
+ const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'')||'jpg';
+ const path=user.id+'/'+Date.now()+'.'+ext;
+ const up=await db.storage.from('topup-bills').upload(path,file);
+ if(up.error)throw up.error;
+ const {error}=await db.from('topup_requests').insert({user_id:user.id,amount,bill_path:path});
+ if(error)throw error;
+ $('amount').value='';
+ $('bill').value='';
+ say('Đã gửi bill. Shop sẽ kiểm tra giao dịch thật trước khi cộng tiền.');
+ await refresh();
+}
+
+async function buy(id){
+ if(!confirm('Xác nhận mua sản phẩm bằng số dư ví?'))return;
+ const {error}=await db.rpc('buy_store_product',{p_product_id:id});
+ if(error)throw error;
+ say('Mua hàng thành công.');
+ await refresh();
+}
+
 async function download(id){
- const {data:p,error}=await db.from("products").select("file_path").eq("id",id).maybeSingle();
- if(error||!p?.file_path)throw error||new Error("Không tìm thấy file.");
- const {data,error:e}=await db.storage.from("product-files").createSignedUrl(p.file_path,120);
+ const {data:p,error}=await db.from('products').select('file_path').eq('id',id).maybeSingle();
+ if(error||!p?.file_path)throw error||Error('Không tìm thấy file.');
+ const {data,error:e}=await db.storage.from('product-files').createSignedUrl(p.file_path,120);
  if(e)throw e;
- window.open(data.signedUrl,"_blank");
+ window.open(data.signedUrl,'_blank');
 }
-async function loadAdminTopups(){
- const {data,error}=await db.from("topup_requests").select("*").eq("status","pending").order("created_at");
- if(error){el("adminTopups").textContent=error.message;return;}
- if(!data?.length){el("adminTopups").textContent="Không có yêu cầu.";return;}
- let html="";
- for(const x of data){
-  const {data:s}=await db.storage.from("topup-bills").createSignedUrl(x.bill_path,300);
-  html+=`<div class="product"><p>${money(x.amount)}</p><p class="small">User: ${safe(x.user_id)}</p>${s?`<a target="_blank" rel="noopener" href="${s.signedUrl}">Xem bill</a>`:"Không mở được bill"}<button type="button" data-review="${safe(x.id)}" data-approve="true">Duyệt và cộng tiền</button><button type="button" class="danger" data-review="${safe(x.id)}" data-approve="false">Từ chối</button></div>`;
+
+async function adminTopups(){
+ const {data,error}=await db.from('topup_requests').select('*').eq('status','pending').order('created_at');
+ if(error){$('adminTopups').textContent=error.message;return;}
+ let html='';
+ for(const x of data||[]){
+  const {data:s}=await db.storage.from('topup-bills').createSignedUrl(x.bill_path,300);
+  html+=`<div class="product">
+  <b>${money(x.amount)}</b>
+  <p class="small">User: ${esc(x.user_id)}</p>
+  ${s?`<a href="${s.signedUrl}" target="_blank">Xem bill</a>`:'Không mở được bill'}
+  <button data-review="${esc(x.id)}" data-approve="true">Duyệt và cộng tiền</button>
+  <button class="danger" data-review="${esc(x.id)}" data-approve="false">Từ chối</button>
+  </div>`;
  }
- el("adminTopups").innerHTML=html;
+ $('adminTopups').innerHTML=html||'Không có yêu cầu.';
 }
-async function review(id,approve){
- if(!confirm(approve?"Đã kiểm tra tiền vào tài khoản MoMo thật?":"Xác nhận từ chối yêu cầu?"))return;
- const {error}=await db.rpc("approve_topup",{p_request_id:id,p_approve:approve});
- if(error)throw error;
- say("Đã xử lý yêu cầu.");await refresh();
+
+async function adminProducts(){
+ const {data,error}=await db.from('products').select('id,name,price,is_active').order('created_at',{ascending:false});
+ if(error){$('adminProducts').textContent=error.message;return;}
+ $('adminProducts').innerHTML=(data||[]).map(p=>`<div class="product">
+ ${esc(p.name)} — ${money(p.price)}
+ <p>${p.is_active?'Đang bán':'Đã ẩn'}</p>
+ <button class="secondary" data-toggle="${esc(p.id)}" data-active="${!p.is_active}">${p.is_active?'Ẩn sản phẩm':'Hiện sản phẩm'}</button>
+ </div>`).join('')||'Chưa có sản phẩm.';
 }
+
 async function addProduct(){
- const name=el("pname").value.trim(),price=Number(el("pprice").value),file=el("pfile").files[0];
- if(!name||!Number.isFinite(price)||price<0||!file)return say("Nhập tên, giá và chọn file sản phẩm.");
- const ext=(file.name.split(".").pop()||"bin").replace(/[^a-z0-9]/gi,"")||"bin";
- const path="products/"+crypto.randomUUID()+"."+ext;
- const up=await db.storage.from("product-files").upload(path,file);if(up.error)throw up.error;
- const {error}=await db.from("products").insert({name,description:el("pdesc").value,price,image_url:el("pimage").value.trim()||null,file_path:path,is_active:true});
+ const name=$('pname').value.trim(),price=Number($('pprice').value),file=$('pfile').files[0];
+ if(!name||!Number.isFinite(price)||price<0||!file)throw Error('Nhập tên, giá và chọn file sản phẩm.');
+ const ext=(file.name.split('.').pop()||'bin').replace(/[^a-z0-9]/gi,'')||'bin';
+ const path='products/'+crypto.randomUUID()+'.'+ext;
+ const up=await db.storage.from('product-files').upload(path,file);
+ if(up.error)throw up.error;
+ const {error}=await db.from('products').insert({
+  name,description:$('pdesc').value,price,
+  category:$('pcategory').value,
+  image_url:$('pimage').value.trim()||null,
+  file_path:path,is_active:true
+ });
  if(error)throw error;
- say("Đã đăng sản phẩm.");["pname","pdesc","pprice","pimage","pfile"].forEach(id=>el(id).value="");await refresh();
+ say('Đã đăng sản phẩm.');
+ ['pname','pdesc','pprice','pimage','pfile'].forEach(id=>$(id).value='');
+ await adminProducts();
 }
-async function loadAdminProducts(){
- const {data,error}=await db.from("products").select("id,name,price,is_active").order("created_at",{ascending:false});
- if(error){el("adminProducts").textContent=error.message;return;}
- el("adminProducts").innerHTML=(data||[]).map(p=>`<div class="product">${safe(p.name)} — ${money(p.price)}<p>${p.is_active?"Đang bán":"Đã ẩn"}</p><button type="button" class="secondary" data-toggle="${safe(p.id)}" data-active="${!p.is_active}">${p.is_active?"Ẩn sản phẩm":"Hiện sản phẩm"}</button></div>`).join("")||"Chưa có sản phẩm.";
+
+async function review(id,approve){
+ if(!confirm(approve?'Đã kiểm tra tiền vào MoMo thật?':'Xác nhận từ chối yêu cầu?'))return;
+ const {error}=await db.rpc('approve_topup',{p_request_id:id,p_approve:approve});
+ if(error)throw error;
+ say('Đã xử lý yêu cầu.');
+ await adminTopups();
 }
-async function toggleProduct(id,active){
- const {error}=await db.from("products").update({is_active:active}).eq("id",id);if(error)throw error;await refresh();
+
+async function toggle(id,active){
+ const {error}=await db.from('products').update({is_active:active}).eq('id',id);
+ if(error)throw error;
+ await adminProducts();
+ await loadProducts();
 }
-el("loginBtn").addEventListener("click",()=>run(login));
-el("signupBtn").addEventListener("click",()=>run(signup));
-el("logoutBtn").addEventListener("click",()=>run(logout));
-el("sendTopupBtn").addEventListener("click",()=>run(sendTopup));
-el("addProductBtn").addEventListener("click",()=>run(addProduct));
-document.addEventListener("click",e=>{
- const b=e.target.closest("button");if(!b)return;
+
+$('loginBtn').onclick=()=>run(login);
+$('signupBtn').onclick=()=>run(signup);
+$('logoutBtn').onclick=()=>run(logout);
+$('sendTopupBtn').onclick=()=>run(sendTopup);
+$('addProductBtn').onclick=()=>run(addProduct);
+$('searchInput').oninput=renderProducts;
+
+$('nav').onclick=e=>{
+ const b=e.target.closest('[data-page]');
+ if(b)page(b.dataset.page);
+};
+
+$('homeTopup').onclick=$('menuTopup').onclick=()=>page('topup');
+
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>page(b.dataset.back));
+
+$('openAdminBtn').onclick=async()=>{
+ if(!isAdmin){say('Tài khoản này chưa được cấp quyền admin.');return;}
+ await adminTopups();
+ await adminProducts();
+ $('customer').classList.add('hidden');
+ $('admin').classList.remove('hidden');
+};
+
+$('backShop').onclick=()=>{
+ $('admin').classList.add('hidden');
+ $('customer').classList.remove('hidden');
+ page('menu');
+};
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');
+ if(!b)return;
  if(b.dataset.buy)run(()=>buy(b.dataset.buy));
  if(b.dataset.download)run(()=>download(b.dataset.download));
- if(b.dataset.review)run(()=>review(b.dataset.review,b.dataset.approve==="true"));
- if(b.dataset.toggle)run(()=>toggleProduct(b.dataset.toggle,b.dataset.active==="true"));
+ if(b.dataset.review)run(()=>review(b.dataset.review,b.dataset.approve==='true'));
+ if(b.dataset.toggle)run(()=>toggle(b.dataset.toggle,b.dataset.active==='true'));
 });
+
+window.addEventListener('error',e=>say('Lỗi JavaScript: '+e.message));
+window.addEventListener('unhandledrejection',e=>say('Lỗi kết nối: '+(e.reason?.message||e.reason)));
+
 try{
- requireDb();
+ init();
  db.auth.onAuthStateChange(()=>setTimeout(()=>run(refresh),0));
  run(refresh);
-}catch(e){say("Không khởi tạo được Supabase: "+e.message);}
+}catch(e){say(e.message);}
 })();
 </script>
 </body>
